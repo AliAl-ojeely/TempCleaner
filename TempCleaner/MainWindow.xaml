@@ -1,18 +1,17 @@
 ﻿<Window x:Class="TempCleaner.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Team Cleaner" Height="550" Width="420"
+        Title="TempCleaner" Height="680" Width="420"
         WindowStartupLocation="CenterScreen"
         Background="#000000" 
         Foreground="White"
-        Icon="pack://application:,,,/icon.ico"
-        ResizeMode="NoResize">
+        ResizeMode="CanMinimize">
     <Window.Resources>
         <Style x:Key="ModernButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#111111"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="12"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="50"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -20,8 +19,8 @@
                         <Border Background="{TemplateBinding Background}" 
                                 BorderBrush="#333333" 
                                 BorderThickness="1" 
-                                CornerRadius="6">
-                            <ContentPresenter HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Center"/>
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -49,63 +48,63 @@
             </Button>
 
             <StackPanel Margin="0,15,0,0">
-                <TextBlock Text="TEAM CLEANER" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock Text="TEMP CLEANER" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                 <TextBlock Text="System Optimization Tool" Foreground="#666666" HorizontalAlignment="Center" Margin="0,0,0,25"/>
 
-                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,5" Click="CleanTemp_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8B7;" FontSize="16" Margin="0,0,12,0" Foreground="#AAAAAA"/>
-                        <TextBlock Text="Clean Temp Files"/>
+                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="CleanTemp_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8B7;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                        <TextBlock Text="Clean Temp Files" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,5" Click="CleanPrefetch_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE81C;" FontSize="16" Margin="0,0,12,0" Foreground="#AAAAAA"/>
-                        <TextBlock Text="Clear Prefetch &amp; Recent"/>
+                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="CleanPrefetch_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE81C;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                        <TextBlock Text="Clear Prefetch &amp; Recent" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,5" Click="CleanRecycle_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="16" Margin="0,0,12,0" Foreground="#AAAAAA"/>
-                        <TextBlock Text="Empty Recycle Bin"/>
+                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="CleanRecycle_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                        <TextBlock Text="Empty Recycle Bin" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,5" Click="FlushDNS_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE12B;" FontSize="16" Margin="0,0,12,0" Foreground="#AAAAAA"/>
-                        <TextBlock Text="Flush DNS Cache"/>
+                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="FlushDNS_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE12B;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                        <TextBlock Text="Flush DNS Cache" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,5" Click="CleanUpdate_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE895;" FontSize="16" Margin="0,0,12,0" Foreground="#AAAAAA"/>
-                        <TextBlock Text="Clean Win Update Cache"/>
+                <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="CleanUpdate_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE895;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                        <TextBlock Text="Clean Win Update Cache" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
                 <Separator Background="#222222" Margin="0,15"/>
 
-                <Button Content="RUN ALL CLEANUP" Background="#FFFFFF" Foreground="Black" FontSize="16" FontWeight="Black" Height="45" Cursor="Hand" Click="RunAll_Click">
+                <Button Content="RUN ALL CLEANUP" Background="#FFFFFF" Foreground="Black" FontSize="18" FontWeight="Black" Height="60" Cursor="Hand" Click="RunAll_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
 
-                <ProgressBar x:Name="CleanProgress" Height="2" Background="Transparent" Foreground="#1DB954" BorderThickness="0" Margin="0,10,0,0" IsIndeterminate="True" Visibility="Collapsed"/>
+                <ProgressBar x:Name="CleanProgress" Height="2" Background="Transparent" Foreground="#1DB954" BorderThickness="0" Margin="0,15,0,0" IsIndeterminate="True" Visibility="Collapsed"/>
 
-                <TextBlock x:Name="StatusText" Text="Ready" Foreground="#1DB954" HorizontalAlignment="Center" Margin="0,15,0,5"/>
+                <TextBlock x:Name="StatusText" Text="Ready" Foreground="#1DB954" HorizontalAlignment="Center" Margin="0,15,0,10" FontWeight="SemiBold"/>
 
-                <CheckBox x:Name="ChkAutoClose" Content="Close app after cleanup" Foreground="#555555" HorizontalAlignment="Center" FontSize="11">
+                <CheckBox x:Name="ChkAutoClose" Content="Close app after cleanup" Foreground="#777777" HorizontalAlignment="Center" FontSize="12">
                     <CheckBox.LayoutTransform>
-                        <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+                        <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>
                     </CheckBox.LayoutTransform>
                 </CheckBox>
             </StackPanel>
@@ -125,12 +124,12 @@
                             GitHub Profile
                         </Hyperlink>
                     </TextBlock>
-                    <TextBlock Text="version 2.0.0" Foreground="#555555" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                    <Button Content="CLOSE" Width="100" Style="{StaticResource ModernButtonStyle}" Click="CloseModal_Click">
+                    <TextBlock Text="version 1.0" Foreground="#555555" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <Button Content="CLOSE" Width="100" Height="40" Background="#111" Foreground="White" BorderBrush="#333" BorderThickness="1" Cursor="Hand" Click="CloseModal_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border Background="#111" BorderBrush="#333" BorderThickness="1" CornerRadius="5">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,8,0,8"/>
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
