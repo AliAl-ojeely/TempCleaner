@@ -2,7 +2,12 @@
 
 A lightweight, modern, and powerful system optimization tool built with C# and WPF. Featuring a "Pitch Black" UI designed for efficiency and aesthetics.
 
-![Temp Cleaner Interface](Screenshots/main.png)
+
+<br>
+
+<img src="Screenshots/main.png" alt="Temp Cleaner Main Interface" width="750" style="border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+
+<br>
 
 ## Features
 
