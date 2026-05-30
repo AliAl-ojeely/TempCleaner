@@ -31,64 +31,92 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="TopIconButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#333333"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1A1A1A"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="LayoutRoot">
         <Grid Margin="20">
-            <Button Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" 
-                    Background="Transparent" Foreground="#666666" FontSize="16" FontWeight="Bold" 
-                    BorderThickness="1" BorderBrush="#333333" Cursor="Hand" Click="DevInfo_Click">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="15">
-                            <TextBlock Text="!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+            <!-- Top bar with language toggle and dev info -->
+            <Grid>
+                <Button x:Name="LangToggleBtn" Style="{StaticResource TopIconButtonStyle}" 
+                        Width="50" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top"
+                        Click="LangToggle_Click">EN</Button>
+
+                <Button Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" 
+                        Style="{StaticResource TopIconButtonStyle}" Click="DevInfo_Click">
+                    <TextBlock Text="!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </Grid>
 
             <StackPanel Margin="0,15,0,0">
-                <TextBlock Text="TEMP CLEANER" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                <TextBlock Text="System Optimization Tool" Foreground="#666666" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+                <TextBlock x:Name="MainTitleText" Text="TEMP CLEANER" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock x:Name="SubtitleText" Text="System Optimization Tool" Foreground="#666666" HorizontalAlignment="Center" Margin="0,0,0,25"/>
 
                 <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="CleanTemp_Click">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8B7;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                        <TextBlock Text="Clean Temp Files" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="TempCleanText" Text="Clean Temp Files" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
                 <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="CleanPrefetch_Click">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE81C;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                        <TextBlock Text="Clear Prefetch &amp; Recent" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="PrefetchCleanText" Text="Clear Prefetch &amp; Recent" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
                 <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="CleanRecycle_Click">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                        <TextBlock Text="Empty Recycle Bin" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="RecycleCleanText" Text="Empty Recycle Bin" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
                 <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="FlushDNS_Click">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE12B;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                        <TextBlock Text="Flush DNS Cache" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="FlushDNSText" Text="Flush DNS Cache" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
                 <Button Style="{StaticResource ModernButtonStyle}" Margin="0,6" Click="CleanUpdate_Click">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE895;" FontSize="20" Margin="0,0,15,0" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                        <TextBlock Text="Clean Win Update Cache" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="UpdateCleanText" Text="Clean Win Update Cache" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
                 <Separator Background="#222222" Margin="0,15"/>
 
-                <Button Content="RUN ALL CLEANUP" Background="#FFFFFF" Foreground="Black" FontSize="18" FontWeight="Black" Height="60" Cursor="Hand" Click="RunAll_Click">
+                <Button x:Name="RunAllButton" Background="#FFFFFF" Foreground="Black" FontSize="18" FontWeight="Black" Height="60" Cursor="Hand" Click="RunAll_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}" CornerRadius="8">
@@ -102,7 +130,7 @@
 
                 <TextBlock x:Name="StatusText" Text="Ready" Foreground="#1DB954" HorizontalAlignment="Center" Margin="0,15,0,10" FontWeight="SemiBold"/>
 
-                <CheckBox x:Name="ChkAutoClose" Content="Close app after cleanup" Foreground="#777777" HorizontalAlignment="Center" FontSize="12">
+                <CheckBox x:Name="AutoCloseCheckBox" Content="Close app after cleanup" Foreground="#777777" HorizontalAlignment="Center" FontSize="12">
                     <CheckBox.LayoutTransform>
                         <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>
                     </CheckBox.LayoutTransform>
@@ -115,17 +143,17 @@
                     HorizontalAlignment="Center" VerticalAlignment="Center" Padding="30" Width="300">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="👻" FontSize="45" HorizontalAlignment="Center" Margin="0,0,0,15"/>
-                    <TextBlock Text="Developer Info" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                    <TextBlock Text="Ali Al-ojeely" Foreground="White" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="(Mr.Ghost)" Foreground="#AAAAAA" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                    <TextBlock Text="alialojeely@gmail.com" Foreground="#888888" FontSize="13" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock x:Name="DevModalTitleText" Text="Developer Info" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <TextBlock x:Name="DevNameText" Text="Ali Al-ojeely" Foreground="White" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="DevNicknameText" Text="(Mr.Ghost)" Foreground="#AAAAAA" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock x:Name="DevEmailText" Text="alialojeely@gmail.com" Foreground="#888888" FontSize="13" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <TextBlock HorizontalAlignment="Center" Margin="0,0,0,15">
                         <Hyperlink NavigateUri="https://github.com/AliAl-ojeely" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#1DB954" TextDecorations="None" FontWeight="Bold">
-                            GitHub Profile
+                            <TextBlock x:Name="GitHubLinkText" Text="GitHub Profile"/>
                         </Hyperlink>
                     </TextBlock>
-                    <TextBlock Text="version 1.0" Foreground="#555555" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                    <Button Content="CLOSE" Width="100" Height="40" Background="#111" Foreground="White" BorderBrush="#333" BorderThickness="1" Cursor="Hand" Click="CloseModal_Click">
+                    <TextBlock x:Name="VersionText" Text="version 2.0" Foreground="#555555" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <Button x:Name="CloseModalButton" Content="CLOSE" Width="100" Height="40" Background="#111" Foreground="White" BorderBrush="#333" BorderThickness="1" Cursor="Hand" Click="CloseModal_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">

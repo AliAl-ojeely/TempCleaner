@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,12 +11,130 @@ namespace TempCleaner
 {
     public partial class MainWindow : Window
     {
+        private enum AppLanguage { English, Arabic }
+        private AppLanguage _currentLanguage = AppLanguage.English;
+
+        private readonly Dictionary<string, string> _englishStrings = new();
+        private readonly Dictionary<string, string> _arabicStrings = new();
+
         public MainWindow()
         {
             InitializeComponent();
+            InitializeLocalizationDictionaries();
+            SetLanguage(AppLanguage.English);
         }
 
-        // --- UI Events (Dev Modal) ---
+        private void InitializeLocalizationDictionaries()
+        {
+            // English
+            _englishStrings["WindowTitle"] = "TempCleaner";
+            _englishStrings["MainTitle"] = "TEMP CLEANER";
+            _englishStrings["Subtitle"] = "System Optimization Tool";
+            _englishStrings["CleanTemp"] = "Clean Temp Files";
+            _englishStrings["CleanPrefetch"] = "Clear Prefetch & Recent";
+            _englishStrings["CleanRecycle"] = "Empty Recycle Bin";
+            _englishStrings["FlushDNS"] = "Flush DNS Cache";
+            _englishStrings["CleanUpdate"] = "Clean Win Update Cache";
+            _englishStrings["RunAll"] = "RUN ALL CLEANUP";
+            _englishStrings["AutoClose"] = "Close app after cleanup";
+            _englishStrings["StatusReady"] = "Ready";
+            _englishStrings["CleaningTempFiles"] = "Cleaning Temp Files...";
+            _englishStrings["CleaningPrefetch"] = "Cleaning Prefetch & Recent...";
+            _englishStrings["EmptyingRecycle"] = "Emptying Recycle Bin...";
+            _englishStrings["FlushingDNS"] = "Flushing DNS Cache...";
+            _englishStrings["CleaningUpdate"] = "Cleaning Windows Update Cache...";
+            _englishStrings["RunningFullCleanup"] = "Running Full System Cleanup...";
+            _englishStrings["TaskFreedFormat"] = "Task Completed! Freed: {0}";
+            _englishStrings["TaskCompletedSuccess"] = "Task Completed Successfully!";
+            _englishStrings["DevInfoTitle"] = "Developer Info";
+            _englishStrings["DevName"] = "Ali Al-ojeely";
+            _englishStrings["DevNickname"] = "(Mr.Ghost)";
+            _englishStrings["DevEmail"] = "alialojeely@gmail.com";
+            _englishStrings["GitHubLink"] = "GitHub Profile";
+            _englishStrings["Version"] = "version 2.0";
+            _englishStrings["CloseButton"] = "CLOSE";
+            _englishStrings["LangToggleEN"] = "EN";
+            _englishStrings["LangToggleAR"] = "AR";
+
+            // Arabic
+            _arabicStrings["WindowTitle"] = "منظف الملفات المؤقتة";
+            _arabicStrings["MainTitle"] = "تنظيف الملفات المؤقتة";
+            _arabicStrings["Subtitle"] = "أداة تحسين النظام";
+            _arabicStrings["CleanTemp"] = "تنظيف الملفات المؤقتة";
+            _arabicStrings["CleanPrefetch"] = "مسح Prefetch والمستندات الحديثة";
+            _arabicStrings["CleanRecycle"] = "تفريغ سلة المحذوفات";
+            _arabicStrings["FlushDNS"] = "مسح ذاكرة DNS المؤقتة";
+            _arabicStrings["CleanUpdate"] = "تنظيف ذاكرة تحديث ويندوز";
+            _arabicStrings["RunAll"] = "تشغيل التنظيف الشامل";
+            _arabicStrings["AutoClose"] = "إغلاق التطبيق بعد التنظيف";
+            _arabicStrings["StatusReady"] = "جاهز";
+            _arabicStrings["CleaningTempFiles"] = "جاري تنظيف الملفات المؤقتة...";
+            _arabicStrings["CleaningPrefetch"] = "جاري مسح Prefetch والمستندات الحديثة...";
+            _arabicStrings["EmptyingRecycle"] = "جاري تفريغ سلة المحذوفات...";
+            _arabicStrings["FlushingDNS"] = "جاري مسح ذاكرة DNS...";
+            _arabicStrings["CleaningUpdate"] = "جاري تنظيف ذاكرة تحديث ويندوز...";
+            _arabicStrings["RunningFullCleanup"] = "جاري التنظيف الشامل للنظام...";
+            _arabicStrings["TaskFreedFormat"] = "تمت المهمة! تم تحرير: {0}";
+            _arabicStrings["TaskCompletedSuccess"] = "تمت المهمة بنجاح!";
+            _arabicStrings["DevInfoTitle"] = "معلومات المطور";
+            _arabicStrings["DevName"] = "علي العجيلي";
+            _arabicStrings["DevNickname"] = "(السيد غوست)";
+            _arabicStrings["DevEmail"] = "alialojeely@gmail.com";
+            _arabicStrings["GitHubLink"] = "ملف غيت هاب";
+            _arabicStrings["Version"] = "الإصدار 2.0";
+            _arabicStrings["CloseButton"] = "إغلاق";
+            _arabicStrings["LangToggleEN"] = "EN";
+            _arabicStrings["LangToggleAR"] = "عربي";
+        }
+
+        private string GetString(string key)
+        {
+            var dict = _currentLanguage == AppLanguage.English ? _englishStrings : _arabicStrings;
+            return dict.TryGetValue(key, out var value) ? value : key;
+        }
+
+        private void SetLanguage(AppLanguage language)
+        {
+            _currentLanguage = language;
+
+            Title = GetString("WindowTitle");
+            MainTitleText.Text = GetString("MainTitle");
+            SubtitleText.Text = GetString("Subtitle");
+            TempCleanText.Text = GetString("CleanTemp");
+            PrefetchCleanText.Text = GetString("CleanPrefetch");
+            RecycleCleanText.Text = GetString("CleanRecycle");
+            FlushDNSText.Text = GetString("FlushDNS");
+            UpdateCleanText.Text = GetString("CleanUpdate");
+            RunAllButton.Content = GetString("RunAll");
+            AutoCloseCheckBox.Content = GetString("AutoClose");   // Fixed: use correct control name
+            StatusText.Text = GetString("StatusReady");
+
+            DevModalTitleText.Text = GetString("DevInfoTitle");
+            DevNameText.Text = GetString("DevName");
+            DevNicknameText.Text = GetString("DevNickname");
+            DevEmailText.Text = GetString("DevEmail");
+            GitHubLinkText.Text = GetString("GitHubLink");
+            VersionText.Text = GetString("Version");
+            CloseModalButton.Content = GetString("CloseButton");
+
+            LangToggleBtn.Content = GetString("LangToggleEN");
+
+            if (language == AppLanguage.Arabic)
+            {
+                LayoutRoot.FlowDirection = FlowDirection.RightToLeft;
+                LangToggleBtn.Content = GetString("LangToggleAR");
+            }
+            else
+            {
+                LayoutRoot.FlowDirection = FlowDirection.LeftToRight;
+            }
+        }
+
+        private void LangToggle_Click(object sender, RoutedEventArgs e)
+        {
+            SetLanguage(_currentLanguage == AppLanguage.English ? AppLanguage.Arabic : AppLanguage.English);
+        }
+
         private void DevInfo_Click(object sender, RoutedEventArgs e) => DevModal.Visibility = Visibility.Visible;
         private void CloseModal_Click(object sender, RoutedEventArgs e) => DevModal.Visibility = Visibility.Collapsed;
 
@@ -25,10 +144,9 @@ namespace TempCleaner
             e.Handled = true;
         }
 
-        // --- Cleaning Events ---
         private async void CleanTemp_Click(object sender, RoutedEventArgs e)
         {
-            await RunCleanupTask("Cleaning Temp Files...", () =>
+            await RunCleanupTask(GetString("CleaningTempFiles"), () =>
             {
                 long freed = 0;
                 freed += CleanDirectory(Path.GetTempPath());
@@ -39,7 +157,7 @@ namespace TempCleaner
 
         private async void CleanPrefetch_Click(object sender, RoutedEventArgs e)
         {
-            await RunCleanupTask("Cleaning Prefetch & Recent...", () =>
+            await RunCleanupTask(GetString("CleaningPrefetch"), () =>
             {
                 long freed = 0;
                 freed += CleanDirectory(@"C:\Windows\Prefetch");
@@ -51,8 +169,7 @@ namespace TempCleaner
 
         private async void CleanRecycle_Click(object sender, RoutedEventArgs e)
         {
-            // Note: Cannot easily calculate exact size of Recycle Bin via basic CMD, returning 0 for display
-            await RunCleanupTask("Emptying Recycle Bin...", () =>
+            await RunCleanupTask(GetString("EmptyingRecycle"), () =>
             {
                 ExecuteCommand("powershell.exe", "-Command \"Clear-RecycleBin -Force -ErrorAction SilentlyContinue\"");
                 return 0;
@@ -61,7 +178,7 @@ namespace TempCleaner
 
         private async void FlushDNS_Click(object sender, RoutedEventArgs e)
         {
-            await RunCleanupTask("Flushing DNS Cache...", () =>
+            await RunCleanupTask(GetString("FlushingDNS"), () =>
             {
                 ExecuteCommand("ipconfig.exe", "/flushdns");
                 return 0;
@@ -70,14 +187,12 @@ namespace TempCleaner
 
         private async void CleanUpdate_Click(object sender, RoutedEventArgs e)
         {
-            await RunCleanupTask("Cleaning Windows Update Cache...", () =>
+            await RunCleanupTask(GetString("CleaningUpdate"), () =>
             {
                 long freed = 0;
                 ExecuteCommand("net.exe", "stop wuauserv");
                 ExecuteCommand("net.exe", "stop bits");
-
                 freed += CleanDirectory(@"C:\Windows\SoftwareDistribution\Download");
-
                 ExecuteCommand("net.exe", "start wuauserv");
                 ExecuteCommand("net.exe", "start bits");
                 return freed;
@@ -86,114 +201,98 @@ namespace TempCleaner
 
         private async void RunAll_Click(object sender, RoutedEventArgs e)
         {
-            await RunCleanupTask("Running Full System Cleanup...", () =>
+            await RunCleanupTask(GetString("RunningFullCleanup"), () =>
             {
                 long totalFreed = 0;
-
                 totalFreed += CleanDirectory(Path.GetTempPath());
                 totalFreed += CleanDirectory(@"C:\Windows\Temp");
                 totalFreed += CleanDirectory(@"C:\Windows\Prefetch");
-
                 string recentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Recent");
                 totalFreed += CleanDirectory(recentPath);
-
                 ExecuteCommand("powershell.exe", "-Command \"Clear-RecycleBin -Force -ErrorAction SilentlyContinue\"");
                 ExecuteCommand("ipconfig.exe", "/flushdns");
-
                 ExecuteCommand("net.exe", "stop wuauserv");
                 ExecuteCommand("net.exe", "stop bits");
                 totalFreed += CleanDirectory(@"C:\Windows\SoftwareDistribution\Download");
                 ExecuteCommand("net.exe", "start wuauserv");
                 ExecuteCommand("net.exe", "start bits");
-
                 return totalFreed;
             });
         }
 
-        // --- Core Logic & Helpers ---
-
-        // Wrapper to handle UI updates, progress bar, and display freed space
         private async Task RunCleanupTask(string startMessage, Func<long> cleanupAction)
         {
             StatusText.Text = startMessage;
-            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFB300")); // Orange warning
-            CleanProgress.Visibility = Visibility.Visible; // Show progress bar
+            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFB300"));
+            CleanProgress.Visibility = Visibility.Visible;
 
-            // Run the heavy lifting in the background and get the freed bytes
             long bytesFreed = await Task.Run(cleanupAction);
 
-            CleanProgress.Visibility = Visibility.Collapsed; // Hide progress bar
+            CleanProgress.Visibility = Visibility.Collapsed;
 
-            // Format the message
             if (bytesFreed > 0)
-                StatusText.Text = $"Task Completed! Freed: {FormatBytes(bytesFreed)}";
+                StatusText.Text = string.Format(GetString("TaskFreedFormat"), FormatBytes(bytesFreed));
             else
-                StatusText.Text = "Task Completed Successfully!";
+                StatusText.Text = GetString("TaskCompletedSuccess");
 
-            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1DB954")); // Green success
+            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1DB954"));
 
-            // Handle Auto-Close
-            if (ChkAutoClose.IsChecked == true)
+            if (AutoCloseCheckBox.IsChecked == true)  // Fixed: use correct checkbox name
             {
-                await Task.Delay(1500); // Wait 1.5 seconds so user can see the success message
+                await Task.Delay(1500);
                 Application.Current.Shutdown();
             }
         }
 
-        // Safely deletes files/folders and returns the total size in bytes of deleted items
         private long CleanDirectory(string path)
         {
             if (!Directory.Exists(path)) return 0;
 
             long freedSpace = 0;
-            DirectoryInfo di = new DirectoryInfo(path);
+            var di = new DirectoryInfo(path);
 
-            // Delete Files and calculate size
-            foreach (FileInfo file in di.GetFiles())
+            foreach (var file in di.GetFiles())
             {
                 try
                 {
                     long size = file.Length;
                     file.Delete();
-                    freedSpace += size; // Add to total only if deletion succeeded
+                    freedSpace += size;
                 }
-                catch { /* Ignore locked files */ }
+                catch { }
             }
 
-            // Delete Sub-folders recursively
-            foreach (DirectoryInfo dir in di.GetDirectories())
+            foreach (var dir in di.GetDirectories())
             {
                 try
                 {
-                    freedSpace += CleanDirectory(dir.FullName); // Add nested files size
+                    freedSpace += CleanDirectory(dir.FullName);
                     dir.Delete(true);
                 }
-                catch { /* Ignore locked folders */ }
+                catch { }
             }
 
             return freedSpace;
         }
 
-        // Utility to format bytes into readable KB, MB, GB
         private string FormatBytes(long bytes)
         {
             string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
             int counter = 0;
-            decimal number = (decimal)bytes;
+            decimal number = bytes;
             while (Math.Round(number / 1024) >= 1)
             {
                 number /= 1024;
                 counter++;
             }
-            return string.Format("{0:n2} {1}", number, suffixes[counter]);
+            return $"{number:n2} {suffixes[counter]}";
         }
 
-        // Runs hidden system commands (like CMD or PowerShell)
         private void ExecuteCommand(string fileName, string arguments)
         {
             try
             {
-                ProcessStartInfo psi = new ProcessStartInfo
+                var psi = new ProcessStartInfo
                 {
                     FileName = fileName,
                     Arguments = arguments,
@@ -201,12 +300,12 @@ namespace TempCleaner
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };
-                using (Process process = Process.Start(psi))
+                using (var process = Process.Start(psi))
                 {
                     process?.WaitForExit();
                 }
             }
-            catch { /* Ignore command execution errors */ }
+            catch { }
         }
     }
 }
