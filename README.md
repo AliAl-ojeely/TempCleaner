@@ -1,4 +1,4 @@
-# Temp Cleaner Version 1.0
+# Temp Cleaner Version
 
 A lightweight, modern, and powerful system optimization tool built with C# and WPF. Featuring a "Pitch Black" UI designed for efficiency and aesthetics.
 
@@ -12,6 +12,7 @@ A lightweight, modern, and powerful system optimization tool built with C# and W
 ## Features
 
 - **User & System Temp Cleaning:** Safely removes temporary files to free up space.
+- **Arabic Language:** Adding the Arabic language for the text of the app.
 - **Prefetch & Recent Items:** Clears Windows cache and recent file history.
 - **Recycle Bin:** Empties the bin with a single click.
 - **DNS Flush:** Refreshes your network connection by flushing the DNS cache.
