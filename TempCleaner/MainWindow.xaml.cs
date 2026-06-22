@@ -17,11 +17,28 @@ namespace TempCleaner
         private readonly Dictionary<string, string> _englishStrings = new();
         private readonly Dictionary<string, string> _arabicStrings = new();
 
+        // List of UI elements to disable during cleanup
+        private List<UIElement> _cleanupControls;
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeLocalizationDictionaries();
             SetLanguage(AppLanguage.English);
+
+            // Collect all controls that must be disabled during any cleanup
+            _cleanupControls = new List<UIElement>
+            {
+                CleanTempButton,
+                CleanPrefetchButton,
+                CleanRecycleButton,
+                FlushDNSButton,
+                CleanUpdateButton,
+                RunAllButton,
+                LangToggleBtn,
+                DevInfoButton,
+                AutoCloseCheckBox
+            };
         }
 
         private void InitializeLocalizationDictionaries()
@@ -51,7 +68,7 @@ namespace TempCleaner
             _englishStrings["DevNickname"] = "(Mr.Ghost)";
             _englishStrings["DevEmail"] = "alialojeely@gmail.com";
             _englishStrings["GitHubLink"] = "GitHub Profile";
-            _englishStrings["Version"] = "version 2.0";
+            _englishStrings["Version"] = "version 2.5";
             _englishStrings["CloseButton"] = "CLOSE";
             _englishStrings["LangToggleEN"] = "EN";
             _englishStrings["LangToggleAR"] = "AR";
@@ -81,7 +98,7 @@ namespace TempCleaner
             _arabicStrings["DevNickname"] = "(السيد غوست)";
             _arabicStrings["DevEmail"] = "alialojeely@gmail.com";
             _arabicStrings["GitHubLink"] = "ملف غيت هاب";
-            _arabicStrings["Version"] = "الإصدار 2.0";
+            _arabicStrings["Version"] = "الإصدار 2.5";
             _arabicStrings["CloseButton"] = "إغلاق";
             _arabicStrings["LangToggleEN"] = "EN";
             _arabicStrings["LangToggleAR"] = "عربي";
@@ -106,7 +123,7 @@ namespace TempCleaner
             FlushDNSText.Text = GetString("FlushDNS");
             UpdateCleanText.Text = GetString("CleanUpdate");
             RunAllButton.Content = GetString("RunAll");
-            AutoCloseCheckBox.Content = GetString("AutoClose");   // Fixed: use correct control name
+            AutoCloseCheckBox.Content = GetString("AutoClose");
             StatusText.Text = GetString("StatusReady");
 
             DevModalTitleText.Text = GetString("DevInfoTitle");
@@ -144,6 +161,9 @@ namespace TempCleaner
             e.Handled = true;
         }
 
+        // --------------------------------------------------------
+        //  Button Click Handlers – each calls RunCleanupTask
+        // --------------------------------------------------------
         private async void CleanTemp_Click(object sender, RoutedEventArgs e)
         {
             await RunCleanupTask(GetString("CleaningTempFiles"), () =>
@@ -220,30 +240,58 @@ namespace TempCleaner
             });
         }
 
+        // --------------------------------------------------------
+        //  Core cleanup runner with UI disable/enable logic
+        // --------------------------------------------------------
         private async Task RunCleanupTask(string startMessage, Func<long> cleanupAction)
         {
-            StatusText.Text = startMessage;
-            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFB300"));
-            CleanProgress.Visibility = Visibility.Visible;
+            // Disable all interactive controls so user can't click anything else
+            SetControlsEnabled(false);
 
-            long bytesFreed = await Task.Run(cleanupAction);
-
-            CleanProgress.Visibility = Visibility.Collapsed;
-
-            if (bytesFreed > 0)
-                StatusText.Text = string.Format(GetString("TaskFreedFormat"), FormatBytes(bytesFreed));
-            else
-                StatusText.Text = GetString("TaskCompletedSuccess");
-
-            StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1DB954"));
-
-            if (AutoCloseCheckBox.IsChecked == true)  // Fixed: use correct checkbox name
+            try
             {
-                await Task.Delay(1500);
-                Application.Current.Shutdown();
+                StatusText.Text = startMessage;
+                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFB300"));
+                CleanProgress.Visibility = Visibility.Visible;
+
+                long bytesFreed = await Task.Run(cleanupAction);
+
+                CleanProgress.Visibility = Visibility.Collapsed;
+
+                if (bytesFreed > 0)
+                    StatusText.Text = string.Format(GetString("TaskFreedFormat"), FormatBytes(bytesFreed));
+                else
+                    StatusText.Text = GetString("TaskCompletedSuccess");
+
+                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1DB954"));
+
+                if (AutoCloseCheckBox.IsChecked == true)
+                {
+                    await Task.Delay(1500);
+                    Application.Current.Shutdown();
+                }
+            }
+            finally
+            {
+                // Re-enable all controls even if an error occurred
+                SetControlsEnabled(true);
             }
         }
 
+        /// <summary>
+        /// Enables or disables all buttons/controls that should be locked during cleanup.
+        /// </summary>
+        private void SetControlsEnabled(bool enabled)
+        {
+            foreach (var control in _cleanupControls)
+            {
+                control.IsEnabled = enabled;
+            }
+        }
+
+        // --------------------------------------------------------
+        //  Helper methods (unchanged from original)
+        // --------------------------------------------------------
         private long CleanDirectory(string path)
         {
             if (!Directory.Exists(path)) return 0;
