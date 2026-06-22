@@ -1,4 +1,4 @@
-# Temp Cleaner Version
+# Temp Cleaner Version 2.5
 
 A lightweight, modern, and powerful system optimization tool built with C# and WPF. Featuring a "Pitch Black" UI designed for efficiency and aesthetics.
 
