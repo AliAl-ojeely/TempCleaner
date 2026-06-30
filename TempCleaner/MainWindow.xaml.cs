@@ -20,13 +20,15 @@ namespace TempCleaner
         // List of UI elements to disable during cleanup
         private List<UIElement> _cleanupControls;
 
+        // Dynamic Windows directory path
+        private readonly string _windowsDir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeLocalizationDictionaries();
             SetLanguage(AppLanguage.English);
 
-            // Collect all controls that must be disabled during any cleanup
             _cleanupControls = new List<UIElement>
             {
                 CleanTempButton,
@@ -39,6 +41,8 @@ namespace TempCleaner
                 DevInfoButton,
                 AutoCloseCheckBox
             };
+
+            LoadLastRunInfo();
         }
 
         private void InitializeLocalizationDictionaries()
@@ -64,11 +68,11 @@ namespace TempCleaner
             _englishStrings["TaskFreedFormat"] = "Task Completed! Freed: {0}";
             _englishStrings["TaskCompletedSuccess"] = "Task Completed Successfully!";
             _englishStrings["DevInfoTitle"] = "Developer Info";
-            _englishStrings["DevName"] = "Ali Al-ojeely";
+            _englishStrings["DevName"] = "Nasser Al-Nimr";
             _englishStrings["DevNickname"] = "(Mr.Ghost)";
             _englishStrings["DevEmail"] = "alialojeely@gmail.com";
             _englishStrings["GitHubLink"] = "GitHub Profile";
-            _englishStrings["Version"] = "version 2.5";
+            _englishStrings["Version"] = "version 2.7";
             _englishStrings["CloseButton"] = "CLOSE";
             _englishStrings["LangToggleEN"] = "EN";
             _englishStrings["LangToggleAR"] = "AR";
@@ -94,11 +98,11 @@ namespace TempCleaner
             _arabicStrings["TaskFreedFormat"] = "تمت المهمة! تم تحرير: {0}";
             _arabicStrings["TaskCompletedSuccess"] = "تمت المهمة بنجاح!";
             _arabicStrings["DevInfoTitle"] = "معلومات المطور";
-            _arabicStrings["DevName"] = "علي العجيلي";
+            _arabicStrings["DevName"] = "ناصر النمر";
             _arabicStrings["DevNickname"] = "(السيد غوست)";
             _arabicStrings["DevEmail"] = "alialojeely@gmail.com";
-            _arabicStrings["GitHubLink"] = "ملف غيت هاب";
-            _arabicStrings["Version"] = "الإصدار 2.5";
+            _arabicStrings["GitHubLink"] = "GitHub Profile";
+            _arabicStrings["Version"] = "الإصدار 2.7";
             _arabicStrings["CloseButton"] = "إغلاق";
             _arabicStrings["LangToggleEN"] = "EN";
             _arabicStrings["LangToggleAR"] = "عربي";
@@ -162,7 +166,7 @@ namespace TempCleaner
         }
 
         // --------------------------------------------------------
-        //  Button Click Handlers – each calls RunCleanupTask
+        //  Button Click Handlers
         // --------------------------------------------------------
         private async void CleanTemp_Click(object sender, RoutedEventArgs e)
         {
@@ -170,7 +174,7 @@ namespace TempCleaner
             {
                 long freed = 0;
                 freed += CleanDirectory(Path.GetTempPath());
-                freed += CleanDirectory(@"C:\Windows\Temp");
+                freed += CleanDirectory(Path.Combine(_windowsDir, "Temp"));
                 return freed;
             });
         }
@@ -180,7 +184,7 @@ namespace TempCleaner
             await RunCleanupTask(GetString("CleaningPrefetch"), () =>
             {
                 long freed = 0;
-                freed += CleanDirectory(@"C:\Windows\Prefetch");
+                freed += CleanDirectory(Path.Combine(_windowsDir, "Prefetch"));
                 string recentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Recent");
                 freed += CleanDirectory(recentPath);
                 return freed;
@@ -212,7 +216,7 @@ namespace TempCleaner
                 long freed = 0;
                 ExecuteCommand("net.exe", "stop wuauserv");
                 ExecuteCommand("net.exe", "stop bits");
-                freed += CleanDirectory(@"C:\Windows\SoftwareDistribution\Download");
+                freed += CleanDirectory(Path.Combine(_windowsDir, @"SoftwareDistribution\Download"));
                 ExecuteCommand("net.exe", "start wuauserv");
                 ExecuteCommand("net.exe", "start bits");
                 return freed;
@@ -225,27 +229,30 @@ namespace TempCleaner
             {
                 long totalFreed = 0;
                 totalFreed += CleanDirectory(Path.GetTempPath());
-                totalFreed += CleanDirectory(@"C:\Windows\Temp");
-                totalFreed += CleanDirectory(@"C:\Windows\Prefetch");
+                totalFreed += CleanDirectory(Path.Combine(_windowsDir, "Temp"));
+                totalFreed += CleanDirectory(Path.Combine(_windowsDir, "Prefetch"));
+
                 string recentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Recent");
                 totalFreed += CleanDirectory(recentPath);
+
                 ExecuteCommand("powershell.exe", "-Command \"Clear-RecycleBin -Force -ErrorAction SilentlyContinue\"");
                 ExecuteCommand("ipconfig.exe", "/flushdns");
+
                 ExecuteCommand("net.exe", "stop wuauserv");
                 ExecuteCommand("net.exe", "stop bits");
-                totalFreed += CleanDirectory(@"C:\Windows\SoftwareDistribution\Download");
+                totalFreed += CleanDirectory(Path.Combine(_windowsDir, @"SoftwareDistribution\Download"));
                 ExecuteCommand("net.exe", "start wuauserv");
                 ExecuteCommand("net.exe", "start bits");
+
                 return totalFreed;
             });
         }
 
         // --------------------------------------------------------
-        //  Core cleanup runner with UI disable/enable logic
+        //  Core cleanup runner with UI disable/enable and LOGGING
         // --------------------------------------------------------
         private async Task RunCleanupTask(string startMessage, Func<long> cleanupAction)
         {
-            // Disable all interactive controls so user can't click anything else
             SetControlsEnabled(false);
 
             try
@@ -257,6 +264,12 @@ namespace TempCleaner
                 long bytesFreed = await Task.Run(cleanupAction);
 
                 CleanProgress.Visibility = Visibility.Collapsed;
+
+                // Create a clean action name for the log (removing trailing dots)
+                string actionNameForLog = startMessage.Replace("...", "").Trim();
+
+                // Write to our local log file
+                WriteToLog(actionNameForLog, bytesFreed);
 
                 if (bytesFreed > 0)
                     StatusText.Text = string.Format(GetString("TaskFreedFormat"), FormatBytes(bytesFreed));
@@ -273,14 +286,10 @@ namespace TempCleaner
             }
             finally
             {
-                // Re-enable all controls even if an error occurred
                 SetControlsEnabled(true);
             }
         }
 
-        /// <summary>
-        /// Enables or disables all buttons/controls that should be locked during cleanup.
-        /// </summary>
         private void SetControlsEnabled(bool enabled)
         {
             foreach (var control in _cleanupControls)
@@ -290,8 +299,33 @@ namespace TempCleaner
         }
 
         // --------------------------------------------------------
-        //  Helper methods (unchanged from original)
+        //  Helper methods
         // --------------------------------------------------------
+
+        /// <summary>
+        /// Writes a record of the cleanup task to a local log file.
+        /// </summary>
+        private void WriteToLog(string actionName, long bytesFreed)
+        {
+            try
+            {
+                // File will be created in the same folder as the .exe
+                string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TempCleaner_History.log");
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                string formattedSize = FormatBytes(bytesFreed);
+
+                // Format: [2026-06-30 15:30:00] Action: Cleaning Temp Files | Space Freed: 250.50 MB
+                string logEntry = $"[{timestamp}] Action: {actionName} | Space Freed: {formattedSize}{Environment.NewLine}";
+
+                File.AppendAllText(logFilePath, logEntry);
+                Dispatcher.Invoke(() => LoadLastRunInfo());
+            }
+            catch
+            {
+                // Silently ignore if file is locked so the app doesn't crash
+            }
+        }
+
         private long CleanDirectory(string path)
         {
             if (!Directory.Exists(path)) return 0;
@@ -307,7 +341,8 @@ namespace TempCleaner
                     file.Delete();
                     freedSpace += size;
                 }
-                catch { }
+                catch (UnauthorizedAccessException) { }
+                catch (IOException) { }
             }
 
             foreach (var dir in di.GetDirectories())
@@ -317,7 +352,8 @@ namespace TempCleaner
                     freedSpace += CleanDirectory(dir.FullName);
                     dir.Delete(true);
                 }
-                catch { }
+                catch (UnauthorizedAccessException) { }
+                catch (IOException) { }
             }
 
             return freedSpace;
@@ -325,6 +361,8 @@ namespace TempCleaner
 
         private string FormatBytes(long bytes)
         {
+            if (bytes == 0) return "0 B";
+
             string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
             int counter = 0;
             decimal number = bytes;
@@ -353,7 +391,36 @@ namespace TempCleaner
                     process?.WaitForExit();
                 }
             }
-            catch { }
+            catch (System.ComponentModel.Win32Exception)
+            {
+            }
+        }
+
+        private void LoadLastRunInfo()
+        {
+            try
+            {
+                string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TempCleaner_History.log");
+                if (File.Exists(logFilePath))
+                {
+                    string[] lines = File.ReadAllLines(logFilePath);
+                    for (int i = lines.Length - 1; i >= 0; i--)
+                    {
+                        if (!string.IsNullOrWhiteSpace(lines[i]))
+                        {
+                            string lastEntry = lines[i].Replace(Environment.NewLine, "");
+                            LastRunText.Text = lastEntry;
+                            return;
+                        }
+                    }
+                }
+
+                LastRunText.Text = _currentLanguage == AppLanguage.Arabic ? "لا توجد عمليات تنظيف سابقة" : "No previous cleanups found";
+            }
+            catch
+            {
+                LastRunText.Text = "";
+            }
         }
     }
 }
